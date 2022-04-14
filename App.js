@@ -1,36 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MapView from "react-native-maps";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import FreeNowCars from "./components/FreeNowCars";
+import axios from "axios";
 
-const fakeDriverLocations = [
-  {
-    'id': 1,
-    "coordinate": {
-      "latitude": 53.5514746,
-      "longitude": 10.0031117
-  },
-},
-  {
-    'id': 2,
-    "coordinate": {
-      "latitude": 53.55342888743947,
-      "longitude": 10.007842183122419
-  },
-  },
-  {
-    'id': 3,
-    "coordinate": {
-      "latitude": 53.58222524795621,
-      "longitude": 10.066394607153665
-  },
-  },
-];
-
-console.log(fakeDriverLocations);
 
 export default function App() {
-  const [cars, setCars] = useState(fakeDriverLocations);
+  const [cars, setCars] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    const getCars = async () => {
+      try {
+        // setLoading(true);
+ const {data} = await axios.get(
+   "http://localhost:5000/free-now/vehicles"
+ );
+setCars(data.poiList);
+console.log(cars);
+console.log(1);
+
+// setLoading(false);
+      }catch(error){
+        return alert("Sorry, no data")
+      }
+    };
+    getCars();   
+  },[]);
+  
   return (
     <View style={styles.container}>
       <MapView
@@ -53,7 +50,7 @@ export default function App() {
           />
         ))}
       </MapView>
-      <Text>FreeNowCars </Text>
+      <Text>FreeNowCars</Text>
     </View>
   );
 }
