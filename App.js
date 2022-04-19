@@ -3,33 +3,51 @@ import MapView from "react-native-maps";
 import { StyleSheet, Text, View } from "react-native";
 import FreeNowCars from "./components/FreeNowCars";
 import axios from "axios";
-
+import ShareNowCars from "./components/ShareNowCars";
 
 export default function App() {
   const [cars, setCars] = useState([]);
-  // const [loading, setLoading] = useState(false);
-  
+  const [sncars, setSncars] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
   useEffect(() => {
     const getCars = async () => {
       try {
-        // setLoading(true);
- const {data} = await axios.get(
-   "http://localhost:5000/free-now/vehicles"
- );
-setCars(data.poiList);
-console.log(cars);
-console.log(1);
-
-// setLoading(false);
-      }catch(error){
-        return alert("Sorry, no data")
+        setLoading(true);
+        const { data } = await axios.get(
+          "http://localhost:5000/free-now/vehicles"
+        );
+        setCars(data.poiList);
+        setLoading(false);
+      } catch (error) {
+        return alert("Sorry, no data");
       }
-    };
-    getCars();   
-  },[]);
-  
+    };    
+    getCars();    
+  }, []);
+
+  useEffect(() => {
+  const getSnCars = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        "http://localhost:5000/share-now/vehicles"
+      );
+      setSncars(data.placemarks);   
+      setLoading(false);
+    } catch (error) {
+      return alert("Sorry, no data");
+    }
+  };
+  getSnCars();
+}, []);
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container}>  
+   {loading?(
+<Text>Loading...</Text>
+) : (
       <MapView
         initialRegion={{
           latitude: 53.5532316,
@@ -41,16 +59,25 @@ console.log(1);
       >
         {cars.map((object) => (
           <FreeNowCars
-            key={object.id}
-            uid={object.id}
+           key={object.id}
             location={{
               latitude: object.coordinate.latitude,
               longitude: object.coordinate.longitude,
             }}
           />
         ))}
-      </MapView>
-      <Text>FreeNowCars</Text>
+        {sncars.map((object) => (
+          <ShareNowCars 
+           key={object.id}
+          location={{
+              latitude: object.coordinates[1],
+              longitude: object.coordinates[0],
+            }}
+           />
+        ))}
+       
+      </MapView> )}
+      <Text>FreeNowCars & ShareNowCars</Text> 
     </View>
   );
 }
