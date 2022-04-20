@@ -1,46 +1,46 @@
 import React, { useState, useEffect } from "react";
 import MapView from "react-native-maps";
 import { StyleSheet, Text, View } from "react-native";
-import FreeNowCars from "./components/FreeNowCars";
 import axios from "axios";
+import FreeNowCars from "./components/FreeNowCars";
 import ShareNowCars from "./components/ShareNowCars";
 
 export default function App() {
-  const [cars, setCars] = useState([]);
-  const [sncars, setSncars] = useState([]);
+  const [freenowcars, setFreenowcars] = useState([]);
+  const [sharenowcars, setSharenowcars] = useState([]);
   const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
-    const getCars = async () => {
+    const getFreeNowCars = async () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
           "http://localhost:5000/free-now/vehicles"
         );
-        setCars(data.poiList);
+        setFreenowcars(data.poiList);
         setLoading(false);
       } catch (error) {
         return alert("Sorry, no data");
       }
     };    
-    getCars();    
+    getFreeNowCars();    
   }, []);
 
   useEffect(() => {
-  const getSnCars = async () => {
+  const getShareNowCars = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
         "http://localhost:5000/share-now/vehicles"
       );
-      setSncars(data.placemarks);   
+      setSharenowcars(data.placemarks);   
       setLoading(false);
     } catch (error) {
       return alert("Sorry, no data");
     }
   };
-  getSnCars();
+  getShareNowCars();
 }, []);
 
   return (
@@ -57,7 +57,7 @@ export default function App() {
         }}
         style={styles.mapView}
       >
-        {cars.map((object) => (
+        {freenowcars.map((object) => (
           <FreeNowCars
            key={object.id}
             location={{
@@ -66,7 +66,7 @@ export default function App() {
             }}
           />
         ))}
-        {sncars.map((object) => (
+        {sharenowcars.map((object) => (
           <ShareNowCars 
            key={object.id}
           location={{
@@ -74,10 +74,8 @@ export default function App() {
               longitude: object.coordinates[0],
             }}
            />
-        ))}
-       
+        ))}       
       </MapView> )}
-      <Text>FreeNowCars & ShareNowCars</Text> 
     </View>
   );
 }
