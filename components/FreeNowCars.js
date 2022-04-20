@@ -6,8 +6,7 @@ const FreeNowCars = ({ id, location, state, type }) => {
   return Platform.OS === "web" ? (
     <MapView.Marker
       key={id}
-      coordinate={location} 
-      image={{uri: '../assets/taxi.png'}}
+      coordinate={location}
       title={type}
       description={state}
     ></MapView.Marker>
